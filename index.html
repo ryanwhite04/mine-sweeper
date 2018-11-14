@@ -1,0 +1,32 @@
+<html>
+<head>
+  <style>
+      *:not(:defined) {
+        display: none;
+      }
+  </style>
+  <script>
+  const _customElementsDefine = window.customElements.define;
+window.customElements.define = (name, cl, conf) => {
+  if (!customElements.get(name)) {
+    _customElementsDefine.call(window.customElements, name, cl, conf);
+  }
+  else {
+    console.warn(`${name} has been defined twice`);
+  }
+};
+  </script>
+  <!-- Polyfills only needed for Firefox and Edge. -->
+  <script src="https://unpkg.com/@webcomponents/webcomponentsjs@next/webcomponents-loader.js"></script>
+</head>
+<body>
+  <!-- Works only on browsers that support Javascript modules like
+       Chrome, Safari, Firefox 60, Edge 17 -->
+  <script type="module" src="index.js"></script>
+  <minesweeper-grid id="game" rows="4" columns="4"></minesweeper-grid>
+  <script>
+    document.getElementById('game').addEventListener('lose', console.log)
+    document.getElementById('game').addEventListener('win', console.log)
+  </script>
+</body>
+</html>
