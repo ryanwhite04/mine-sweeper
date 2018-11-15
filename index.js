@@ -9,16 +9,39 @@ import 'https://unpkg.com/@polymer/paper-input@next/paper-input.js?module';
 import 'https://unpkg.com/@polymer/paper-dropdown-menu@next/paper-dropdown-menu.js?module';
 import 'https://unpkg.com/@polymer/paper-listbox@next/paper-listbox.js?module';
 import 'https://unpkg.com/@polymer/paper-item@next/paper-item.js?module';
-import 'https://unpkg.com/@polymer/iron-icons/iron-icons.js?module'
+import 'https://unpkg.com/@polymer/iron-icons/iron-icons.js?module';
+import 'https://unpkg.com/@polymer/iron-collapse/iron-collapse.js?module';
 
-const difficultyDropdown = html`<paper-dropdown-menu label="Difficulty">
-  <paper-listbox slot="dropdown-content" selected="1">
-    <paper-item>Simple</paper-item>
-    <paper-item>Medium</paper-item>
-    <paper-item>Expert</paper-item>
-    <paper-item>Custom</paper-item>
-  </paper-listbox>
-</paper-dropdown-menu>`;
+const usefulIcons = [
+  "autorenew", "bug-report", "flag", "help",
+  "help-outline", "history", "home", "hourglass-empty",
+  "hourglass-full", "query-builder", "refresh", "schedule",
+  "settings", "settings-applications", "store", "watch-later"
+];
+
+class TimeKeeper extends LitElement {
+
+  static get properties() {
+    return {
+      time: {
+         type: Number,
+         reflect: true,
+      }
+    }
+  }
+
+  render() {
+
+    
+//     return html`<paper-fab
+//       icon="hourglass"
+//       label=${this.time}>
+//     </paper-fab>`;
+    return html`<div>${this.time}</div>`;
+  
+  }
+
+}
 
 class MinesweeperGrid extends LitElement {
 
@@ -49,8 +72,7 @@ class MinesweeperGrid extends LitElement {
     this.difficulty = 0.2;
     this.history = [];
     this.flags = [];
-    this.mines = setMines(this.rows, this.columns, this.difficulty);
-    console.dir(this)
+    this.mines = [];
   }
 
   shouldUpdate(changedProperties) {
@@ -198,37 +220,53 @@ class MinesweeperGrid extends LitElement {
       </style>
 
       <paper-card heading="Title">
+
+        <time-keeper time="0"></time-keeper>
+
         <div class="card-actions">
 
-          <div>Rows</div>
-          <paper-slider
-            data-name="rows"
-            label="Rows"
-            @change=${this.change}
-            value=${this.rows}
-            max="100"
-            editable pin snaps>
-          </paper-slider>
+          <paper-dropdown-menu label="Difficulty">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Simple</paper-item>
+              <paper-item>Medium</paper-item>
+              <paper-item>Expert</paper-item>
+              <paper-item>Custom</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
 
-          <div>Columns</div>
-          <paper-slider
-            data-name="columns"
-            label="Columns"
-            @change=${this.change}
-            value=${this.columns}
-            max="100"
-            editable pin>
-          </paper-slider>
+          <iron-collapse id="collapse" ?opened=${this.opened}>
+            
+            <div>Rows</div>
+            <paper-slider
+              data-name="rows"
+              label="Rows"
+              @change=${this.change}
+              value=${this.rows}
+              max="100"
+              editable pin snaps>
+            </paper-slider>
 
-          <div>Difficulty</div>
-          <paper-slider
-            data-name="difficulty"
-            label="Difficulty"
-            @change=${this.change}
-            value=${this.difficulty}
-            max="1"
-            editable pin step="0.1" snaps>
-          </paper-slider>
+            <div>Columns</div>
+            <paper-slider
+              data-name="columns"
+              label="Columns"
+              @change=${this.change}
+              value=${this.columns}
+              max="100"
+              editable pin>
+            </paper-slider>
+
+            <div>Difficulty</div>
+            <paper-slider
+              data-name="difficulty"
+              label="Difficulty"
+              @change=${this.change}
+              value=${this.difficulty}
+              max="1"
+              editable pin step="0.1" snaps>
+            </paper-slider>
+
+          </iron-collapse>
 
           <paper-button class="reset" @click=${this.reset.bind(this)}>Reset</paper-button>
         </div>
@@ -290,4 +328,5 @@ function getNeighbours(position, rows, columns, column = position % columns, row
    ].map(([i, j]) => [row + i, column + j]).filter(([i, j]) => i >= 0 && j >= 0 && i < rows && j < columns).map(([row, column]) => row * columns + column)
 }   
 
+customElements.define('time-keeper', TimeKeeper);
 customElements.define('minesweeper-grid', MinesweeperGrid);
